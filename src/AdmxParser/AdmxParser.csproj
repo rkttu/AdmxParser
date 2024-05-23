@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<AssemblyName>AdmxParser</AssemblyName>
+		<RootNamespace>AdmxParser</RootNamespace>
+		<Title>AdmxParser</Title>
+		<Version>0.5.0</Version>
+		<Authors>Jung Hyun, Nam</Authors>
+		<Company>rkttu.com</Company>
+		<Product>AdmxParser</Product>
+		<Description>.NET-based ADMX/ADML parser library and programmatic Windows policy setting/management framework</Description>
+		<Copyright>(c) 2024 Jung Hyun, Nam, All rights reserved.</Copyright>
+		<PackageProjectUrl>https://github.com/rkttu/AdmxParser</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/rkttu/AdmxParser</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>admx;adml</PackageTags>
+		<PackageReleaseNotes>https://github.com/rkttu/AdmxParser/releases</PackageReleaseNotes>
+		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
+		<IncludeSymbols>True</IncludeSymbols>
+		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+	</PropertyGroup>
+</Project>
