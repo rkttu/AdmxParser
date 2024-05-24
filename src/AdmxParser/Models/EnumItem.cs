@@ -5,8 +5,16 @@ using System.Xml.XPath;
 
 namespace AdmxParser.Models
 {
+    /// <summary>
+    /// Represents an item in an enumeration.
+    /// </summary>
     public class EnumItem : AdmxData, ILocalizable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="EnumItem"/> class.
+        /// </summary>
+        /// <param name="parent">The parent <see cref="AdmxContent"/>.</param>
+        /// <param name="sourceElement">The source <see cref="XElement"/>.</param>
         protected EnumItem(AdmxContent parent, XElement sourceElement) :
             base(parent, sourceElement)
         {
@@ -23,7 +31,14 @@ namespace AdmxParser.Models
         private readonly string _displayName;
         private readonly PolicyValue _value;
 
+        /// <summary>
+        /// Gets the display name of the enumeration item.
+        /// </summary>
         public string DisplayName => _displayName;
+
+        /// <summary>
+        /// Gets the value of the enumeration item.
+        /// </summary>
         public PolicyValue Value => _value;
     }
 

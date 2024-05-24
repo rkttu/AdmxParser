@@ -7,11 +7,20 @@ using System.Xml.XPath;
 
 namespace AdmxParser.Models
 {
+    /// <summary>
+    /// Represents a policy in the ADMX file.
+    /// </summary>
     public class Policy : AdmxData, IHasNameAttribute, ILocalizable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Policy"/> class.
+        /// </summary>
+        /// <param name="parent">The parent ADMX content.</param>
+        /// <param name="sourceElement">The source XML element.</param>
         protected Policy(AdmxContent parent, XElement sourceElement) :
             base(parent, sourceElement)
         {
+            // Initialize policy properties
             _name = sourceElement.Attribute("name")?.Value;
             _displayName = sourceElement.Attribute("displayName")?.Value;
             _class = sourceElement.Attribute("class")?.Value;
@@ -65,17 +74,64 @@ namespace AdmxParser.Models
         private readonly List<Element> _elements;
         private readonly ReadOnlyCollection<Element> _elementsReadOnly;
 
+        /// <summary>
+        /// Gets the name of the policy.
+        /// </summary>
         public string Name => _name;
+
+        /// <summary>
+        /// Gets the display name of the policy.
+        /// </summary>
         public string DisplayName => _displayName;
+
+        /// <summary>
+        /// Gets the class of the policy.
+        /// </summary>
         public string Class => _class;
+
+        /// <summary>
+        /// Gets the explanation text of the policy.
+        /// </summary>
         public string ExplainText => _explainText;
+
+        /// <summary>
+        /// Gets the presentation of the policy.
+        /// </summary>
         public string Presentation => _presentation;
+
+        /// <summary>
+        /// Gets the key of the policy.
+        /// </summary>
         public string Key => _key;
+
+        /// <summary>
+        /// Gets the value name of the policy.
+        /// </summary>
         public string ValueName => _valueName;
+
+        /// <summary>
+        /// Gets the reference to the parent category of the policy.
+        /// </summary>
         public string ParentCategoryRef => _parentCategoryRef;
+
+        /// <summary>
+        /// Gets the reference to the supported operating system of the policy.
+        /// </summary>
         public string SupportedOnRef => _supportedOnRef;
+
+        /// <summary>
+        /// Gets the enabled value of the policy.
+        /// </summary>
         public PolicyValue EnabledValue => _enabledValue;
+
+        /// <summary>
+        /// Gets the disabled value of the policy.
+        /// </summary>
         public PolicyValue DisabledValue => _disabledValue;
+
+        /// <summary>
+        /// Gets the read-only collection of elements associated with the policy.
+        /// </summary>
         public IReadOnlyList<Element> Elements => _elementsReadOnly;
     }
 

@@ -5,8 +5,16 @@ using System.Xml.XPath;
 
 namespace AdmxParser.Models
 {
+    /// <summary>
+    /// Represents a definition in the ADMX file.
+    /// </summary>
     public class Definition : AdmxData, IHasNameAttribute, ILocalizable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="Definition"/> class.
+        /// </summary>
+        /// <param name="parent">The parent ADMX content.</param>
+        /// <param name="sourceElement">The source XML element.</param>
         protected Definition(AdmxContent parent, XElement sourceElement) :
             base(parent, sourceElement)
         {
@@ -42,9 +50,24 @@ namespace AdmxParser.Models
         private readonly List<string> _andReferences;
         private readonly List<string> _orReferences;
 
+        /// <summary>
+        /// Gets the name of the definition.
+        /// </summary>
         public string Name => _name;
+
+        /// <summary>
+        /// Gets the display name of the definition.
+        /// </summary>
         public string DisplayName => _displayName;
+
+        /// <summary>
+        /// Gets the list of AND references of the definition.
+        /// </summary>
         public IReadOnlyList<string> AndReferences => _andReferences;
+
+        /// <summary>
+        /// Gets the list of OR references of the definition.
+        /// </summary>
         public IReadOnlyList<string> OrReferences => _orReferences;
     }
 

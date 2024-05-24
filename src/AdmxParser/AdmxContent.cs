@@ -13,8 +13,15 @@ using System.Xml.XPath;
 
 namespace AdmxParser
 {
+    /// <summary>
+    /// Represents an ADMX contents.
+    /// </summary>
     public class AdmxContent
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="AdmxContent"/> class.
+        /// </summary>
+        /// <param name="admxFilePath">The path to the ADMX file.</param>
         public AdmxContent(string admxFilePath)
         {
             Helpers.EnsureFileExists(admxFilePath);
@@ -24,7 +31,6 @@ namespace AdmxParser
             _admxFilePath = admxFilePath;
             _loaded = false;
             _pathPrefix = default;
-            _namespaceUri = default;
             _targetNamespace = default;
             _resources = default;
             _supportedOn = default;
@@ -46,7 +52,6 @@ namespace AdmxParser
 
         private readonly string _admxFilePath;
         private bool _loaded;
-        private string _namespaceUri;
         private TargetNamespace _targetNamespace;
         private SupersededAdm _supersededAdm;
         private Resources _resources;
@@ -66,19 +71,62 @@ namespace AdmxParser
         internal XmlNamespaceManager NamespaceManager => _nsManager;
         internal HashSet<AdmxData> CreatedAdmxDataList => _createdAdmxDataList;
 
+        /// <summary>
+        /// Gets the path to the ADMX file.
+        /// </summary>
         public string AdmxFilePath => _admxFilePath;
+
+        /// <summary>
+        /// Gets a value indicating whether the ADMX content is loaded.
+        /// </summary>
         public bool Loaded => _loaded;
-        public string NamespaceUri => _namespaceUri;
+
+        /// <summary>
+        /// Gets the target namespace of this ADMX content.
+        /// </summary>
         public TargetNamespace TargetNamespace => _targetNamespace;
+
+        /// <summary>
+        /// Gets the superseded ADM of this ADMX content.
+        /// </summary>
         public SupersededAdm SupersededAdm => _supersededAdm;
+        
+        /// <summary>
+        /// Gets the resources of this ADMX content.
+        /// </summary>
         public Resources Resources => _resources;
+        
+        /// <summary>
+        /// Gets the supported products and definitions of this ADMX content.
+        /// </summary>
         public SupportedOn SupportedOn => _supportedOn;
 
+        /// <summary>
+        /// Gets the loaded ADML resources.
+        /// </summary>
         public IReadOnlyDictionary<string, AdmlResource> LoadedAdmlResources => _loadedAdmlResourcesReadOnly;
+
+        /// <summary>
+        /// Gets the using namespaces of this ADMX content.
+        /// </summary>
         public IReadOnlyList<UsingNamespace> UsingNamespaces => _usingNamespacesReadOnly;
+
+        /// <summary>
+        /// Gets the categories of this ADMX content.
+        /// </summary>
         public IReadOnlyList<Category> Categories => _categoriesReadOnly;
+
+        /// <summary>
+        /// Gets the policies of this ADMX content.
+        /// </summary>
         public IReadOnlyList<Policy> Policies => _policiesReadOnly;
 
+        /// <summary>
+        /// Parse the XML element and create an ADMX data.
+        /// </summary>
+        /// <typeparam name="TAdmxData">The type of AdmxData you want to create</typeparam>
+        /// <param name="sourceElement">Source XML element</param>
+        /// <returns>Returns a new instance in the specified 'TAdmxData' format.</returns>
         public TAdmxData CreateAdmxData<TAdmxData>(XElement sourceElement)
             where TAdmxData : AdmxData
         {
@@ -91,6 +139,11 @@ namespace AdmxParser
             return data;
         }
 
+        /// <summary>
+        /// Load the ADMX content asynchronously.
+        /// </summary>
+        /// <param name="loadAdml">Whether to also attempt to load the ADML file contained under the directory where the ADMX file is stored.</param>
+        /// <param name="cancellationToken">The cancellation token.</param>
         public async Task LoadAsync(bool loadAdml = true, CancellationToken cancellationToken = default)
         {
             await LoadAdmxAsync(cancellationToken).ConfigureAwait(false);
@@ -99,6 +152,13 @@ namespace AdmxParser
                 await LoadAdmlAsync(cancellationToken).ConfigureAwait(false);
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="InvalidOperationException"></exception>
+        /// <exception cref="XmlException"></exception>
         protected async Task LoadAdmxAsync(CancellationToken cancellationToken = default)
         {
             if (_loaded)
@@ -112,7 +172,7 @@ namespace AdmxParser
                 var admxContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
                 var admxDocument = XDocument.Parse(admxContent, LoadOptions.None);
 
-                _nsManager = Helpers.DiscoverDefaultNamespacePrefix(admxDocument, "policyDefinitions", out _pathPrefix, out _namespaceUri, nameTable: default);
+                _nsManager = Helpers.DiscoverDefaultNamespacePrefix(admxDocument, "policyDefinitions", out _pathPrefix, out _, nameTable: default);
                 var rootElement = default(XElement);
 
                 rootElement = admxDocument.XPathSelectElement($"/{_pathPrefix}policyDefinitions", _nsManager);
@@ -165,6 +225,12 @@ namespace AdmxParser
             }
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="cancellationToken">The cancellation token.</param>
+        /// <returns></returns>
+        /// <exception cref="IOException"></exception>
         protected async Task LoadAdmlAsync(CancellationToken cancellationToken = default)
         {
             var directoryPath = Path.GetDirectoryName(_admxFilePath);

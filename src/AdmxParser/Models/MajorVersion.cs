@@ -6,8 +6,16 @@ using System.Xml.XPath;
 
 namespace AdmxParser.Models
 {
+    /// <summary>
+    /// Represents a major version in the ADMX data.
+    /// </summary>
     public class MajorVersion : AdmxData, IHasNameAttribute, ILocalizable
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MajorVersion"/> class.
+        /// </summary>
+        /// <param name="parent">The parent ADMX content.</param>
+        /// <param name="sourceElement">The source XML element.</param>
         protected MajorVersion(AdmxContent parent, XElement sourceElement) :
             base(parent, sourceElement)
         {
@@ -33,9 +41,24 @@ namespace AdmxParser.Models
         private readonly List<MinorVersion> _minorVersions;
         private readonly ReadOnlyCollection<MinorVersion> _minorVersionsReadOnly;
 
+        /// <summary>
+        /// Gets the name of the major version.
+        /// </summary>
         public string Name => _name;
+
+        /// <summary>
+        /// Gets the display name of the major version.
+        /// </summary>
         public string DisplayName => _displayName;
+
+        /// <summary>
+        /// Gets the version index of the major version.
+        /// </summary>
         public int? VersionIndex => _versionIndex;
+
+        /// <summary>
+        /// Gets the read-only list of minor versions.
+        /// </summary>
         public IReadOnlyList<MinorVersion> MinorVersions => _minorVersionsReadOnly;
     }
 

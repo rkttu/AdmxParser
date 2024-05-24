@@ -1,7 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
+		<OutputType>Library</OutputType>
 		<AssemblyName>AdmxParser</AssemblyName>
+	</PropertyGroup>
+
+	<PropertyGroup>
 		<RootNamespace>AdmxParser</RootNamespace>
 		<Title>AdmxParser</Title>
 		<Version>0.5.0</Version>
@@ -18,5 +22,15 @@
 		<PackageLicenseExpression>Apache-2.0</PackageLicenseExpression>
 		<IncludeSymbols>True</IncludeSymbols>
 		<SymbolPackageFormat>symbols.nupkg</SymbolPackageFormat>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<GenerateDocumentationFile>True</GenerateDocumentationFile>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <None Include="..\..\README.md">
+	    <Pack>True</Pack>
+	    <PackagePath>\</PackagePath>
+	  </None>
+	</ItemGroup>
 </Project>

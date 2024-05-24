@@ -2,8 +2,16 @@
 
 namespace AdmxParser.Models
 {
+    /// <summary>
+    /// Represents the target namespace in an ADMX file.
+    /// </summary>
     public class TargetNamespace : AdmxData
     {
+        /// <summary>
+        /// Initializes a new instance of the <see cref="TargetNamespace"/> class.
+        /// </summary>
+        /// <param name="parent">The parent <see cref="AdmxContent"/>.</param>
+        /// <param name="sourceElement">The source <see cref="XElement"/>.</param>
         protected TargetNamespace(AdmxContent parent, XElement sourceElement) :
             base(parent, sourceElement)
         {
@@ -14,7 +22,14 @@ namespace AdmxParser.Models
         private readonly string _prefix;
         private readonly string _namespace;
 
+        /// <summary>
+        /// Gets the prefix of the target namespace.
+        /// </summary>
         public string Prefix => _prefix;
+
+        /// <summary>
+        /// Gets the target namespace.
+        /// </summary>
         public string Namespace => _namespace;
     }
 
