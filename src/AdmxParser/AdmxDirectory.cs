@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -73,6 +75,16 @@ namespace AdmxParser
                 throw new InvalidOperationException("Already contents loaded.");
 
             Helpers.EnsureDirectoryExists(_directoryPath);
+
+            foreach (var eachLanguageFolder in Directory.GetDirectories(_directoryPath))
+            {
+                var eachLanguage = Path.GetFileName(eachLanguageFolder);
+
+                if (!WindowsLanguage.WindowsLanguageCollection.ContainsKey(eachLanguage))
+                    continue;
+
+                _availableLanguages.Add(eachLanguage, eachLanguageFolder);
+            }
 
             foreach (var eachAdmxFile in Helpers.SafeEnumerateFiles(_directoryPath, "*.admx", SearchOption.TopDirectoryOnly))
             {
