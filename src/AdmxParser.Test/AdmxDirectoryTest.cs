@@ -1,11 +1,6 @@
-#pragma warning disable CS9113
-
-using Xunit.Abstractions;
-
 namespace AdmxParser.Test;
 
-public class AdmxDirectoryTest(
-    ITestOutputHelper Output)
+public class AdmxDirectoryTest
 {
     [Fact]
     public async Task Test_AdmxDirectoryTest()
@@ -23,5 +18,3 @@ public class AdmxDirectoryTest(
         Assert.NotEmpty(directory.AvailableLanguages);
     }
 }
-
-#pragma warning restore CS9113

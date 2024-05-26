@@ -20,10 +20,10 @@ namespace AdmxParser
             _policyDefinitionNamespaces = new Lazy<IEnumerable<string>>(
                 () => new string[]
                 {
-                "http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions",
-                "http://www.microsoft.com/GroupPolicy/PolicyDefinitions",
-                "http://schemas.microsoft.com/GroupPolicy/2006/07/Policysecurity intelligence",
-                "https://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions",
+                    "http://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions",
+                    "http://www.microsoft.com/GroupPolicy/PolicyDefinitions",
+                    "http://schemas.microsoft.com/GroupPolicy/2006/07/Policysecurity intelligence",
+                    "https://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions",
                 },
                 false);
 
