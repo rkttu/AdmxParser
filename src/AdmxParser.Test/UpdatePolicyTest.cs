@@ -4,7 +4,11 @@ namespace AdmxParser.Test;
 
 public class UpdatePolicyTest
 {
+#if WINDOWS
     [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
     public void Test_UpdatePolicy_PerformFullPolicyUpdate_Forcing()
     {
         // Act
@@ -16,7 +20,11 @@ public class UpdatePolicyTest
         Assert.True(result);
     }
 
+#if WINDOWS
     [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
     public void Test_UpdatePolicy_PerformFullPolicyUpdate()
     {
         // Act
@@ -28,7 +36,11 @@ public class UpdatePolicyTest
         Assert.True(result);
     }
 
+#if WINDOWS
     [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
     public void Test_UpdatePolicy_PerformMachinePolicyUpdate_Forcing()
     {
         // Act
@@ -39,7 +51,11 @@ public class UpdatePolicyTest
         Assert.True(result);
     }
 
+#if WINDOWS
     [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
     public void Test_UpdatePolicy_PerformMachinePolicyUpdate()
     {
         // Act
@@ -50,7 +66,11 @@ public class UpdatePolicyTest
         Assert.True(result);
     }
 
+#if WINDOWS
     [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
     public void Test_UpdatePolicy_PerformCurrentUserPolicyUpdate_Forcing()
     {
         // Act
@@ -61,7 +81,11 @@ public class UpdatePolicyTest
         Assert.True(result);
     }
 
+#if WINDOWS
     [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
     public void Test_UpdatePolicy_PerformCurrentUserPolicyUpdate()
     {
         // Act
