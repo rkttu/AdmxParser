@@ -31,6 +31,10 @@ namespace AdmxParser.Models
 
             _elements = new List<Element>();
             _elementsReadOnly = new ReadOnlyCollection<Element>(_elements);
+            _enabledList = new List<EnabledListItem>();
+            _enabledListReadOnly = new ReadOnlyCollection<EnabledListItem>(_enabledList);
+            _disabledList = new List<DisabledListItem>();
+            _disabledListReadOnly = new ReadOnlyCollection<DisabledListItem>(_disabledList);
 
             var pathPrefix = Parent.PathPrefix;
             var nsManager = Parent.NamespaceManager;
@@ -57,6 +61,20 @@ namespace AdmxParser.Models
                 foreach (var eachElementElem in elementsElem.Elements())
                     _elements.Add(Parent.CreateAdmxData<Element>(eachElementElem));
             }
+
+            var enabledListElem = sourceElement.XPathSelectElement($"./{pathPrefix}enabledList", nsManager);
+            if (enabledListElem != default)
+            {
+                foreach (var eachEnabledListItemElem in enabledListElem.Elements())
+                    _enabledList.Add(Parent.CreateAdmxData<EnabledListItem>(eachEnabledListItemElem));
+            }
+
+            var disabledListElem = sourceElement.XPathSelectElement($"./{pathPrefix}disabledList", nsManager);
+            if (disabledListElem != default)
+            {
+                foreach (var eachDisabledListItemElem in disabledListElem.Elements())
+                    _disabledList.Add(Parent.CreateAdmxData<DisabledListItem>(eachDisabledListItemElem));
+            }
         }
 
         private readonly string _name;
@@ -73,6 +91,10 @@ namespace AdmxParser.Models
 
         private readonly List<Element> _elements;
         private readonly ReadOnlyCollection<Element> _elementsReadOnly;
+        private readonly List<EnabledListItem> _enabledList;
+        private readonly ReadOnlyCollection<EnabledListItem> _enabledListReadOnly;
+        private readonly List<DisabledListItem> _disabledList;
+        private readonly ReadOnlyCollection<DisabledListItem> _disabledListReadOnly;
 
         /// <summary>
         /// Gets the name of the policy.
@@ -133,6 +155,16 @@ namespace AdmxParser.Models
         /// Gets the read-only collection of elements associated with the policy.
         /// </summary>
         public IReadOnlyList<Element> Elements => _elementsReadOnly;
+
+        /// <summary>
+        /// Gets the read-only collection of enabled list items associated with the policy.
+        /// </summary>
+        public IReadOnlyList<EnabledListItem> EnabledList => _enabledListReadOnly;
+
+        /// <summary>
+        /// Gets the read-only collection of disabled list items associated with the policy.
+        /// </summary>
+        public IReadOnlyList<DisabledListItem> DisabledList => _disabledListReadOnly;
     }
 
 }
