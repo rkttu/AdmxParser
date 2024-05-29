@@ -1,5 +1,4 @@
-﻿using System;
-using System.Xml.Linq;
+﻿using System.Xml.Linq;
 
 namespace AdmxParser.Models
 {
@@ -18,25 +17,35 @@ namespace AdmxParser.Models
         {
             _valueType = sourceElement.Name.LocalName;
 
-            switch (_valueType)
+            switch (_valueType.ToUpperInvariant())
             {
-                case "delete":
+                case "DELETE":
+                    _classifiedValueType = ClassifiedValueType.Delete;
                     _delete = true;
                     break;
-                case "string":
+
+                case "STRING":
+                    _classifiedValueType = ClassifiedValueType.String;
                     _value = sourceElement.Value;
                     break;
-                case "decimal":
+
+                case "DECIMAL":
+                    _classifiedValueType = ClassifiedValueType.Decimal;
                     _value = sourceElement.Attribute("value")?.Value;
                     break;
+
                 default:
-                    throw new Exception($"Unsupported policy value type `{_valueType}`.");
+                    _classifiedValueType = ClassifiedValueType.Unknown;
+                    _value = sourceElement?.Value;
+                    break;
             }
         }
 
         private readonly string _valueType;
         private readonly string _value;
         private readonly bool _delete;
+
+        private readonly ClassifiedValueType _classifiedValueType;
 
         /// <summary>
         /// Gets the value type of the policy value.
@@ -52,6 +61,10 @@ namespace AdmxParser.Models
         /// Gets a value indicating whether the policy value should be deleted.
         /// </summary>
         public bool Delete => _delete;
-    }
 
+        /// <summary>
+        /// Gets the classified value type of the policy value.
+        /// </summary>
+        public ClassifiedValueType ClassifiedValueType => _classifiedValueType;
+    }
 }
