@@ -34,5 +34,10 @@
         /// Represents a list of elements.
         /// </summary>
         List,
+
+        /// <summary>
+        /// Represents a multi-text element.
+        /// </summary>
+        MultiText,
     }
 }

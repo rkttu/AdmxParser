@@ -27,6 +27,13 @@ namespace AdmxParser.Models
             _minValue = sourceElement.Attribute("minValue")?.Value;
             _maxValue = sourceElement.Attribute("maxValue")?.Value;
             _additive = sourceElement.Attribute("additive")?.Value;
+            _explicitValue = sourceElement.Attribute("explicitValue")?.Value;
+            _valuePrefix = sourceElement.Attribute("valuePrefix")?.Value;
+            _maxLength = sourceElement.Attribute("maxLength")?.Value;
+            _storeAsText = sourceElement.Attribute("storeAsText")?.Value;
+            _clientExtension = sourceElement.Attribute("clientExtension")?.Value;
+            _expandable = sourceElement.Attribute("expandable")?.Value;
+            _maxStrings = sourceElement.Attribute("maxStrings")?.Value;
 
             _enumItems = new List<EnumItem>();
             _enumItemsReadOnly = new ReadOnlyCollection<EnumItem>(_enumItems);
@@ -54,6 +61,10 @@ namespace AdmxParser.Models
 
                 case "LIST":
                     _classifiedElementType = ClassifiedElementType.List;
+                    break;
+
+                case "MULTITEXT":
+                    _classifiedElementType = ClassifiedElementType.MultiText;
                     break;
 
                 default:
@@ -88,6 +99,13 @@ namespace AdmxParser.Models
         private readonly string _minValue;
         private readonly string _maxValue;
         private readonly string _additive;
+        private readonly string _explicitValue;
+        private readonly string _valuePrefix;
+        private readonly string _maxLength;
+        private readonly string _storeAsText;
+        private readonly string _clientExtension;
+        private readonly string _expandable;
+        private readonly string _maxStrings;
 
         private readonly ClassifiedElementType _classifiedElementType;
         private readonly List<EnumItem> _enumItems;
@@ -134,6 +152,41 @@ namespace AdmxParser.Models
         /// Gets the additive attribute of the element.
         /// </summary>
         public string Additive => _additive;
+
+        /// <summary>
+        /// Gets the explicit value of the element.
+        /// </summary>
+        public string ExplicitValue => _explicitValue;
+
+        /// <summary>
+        /// Gets the value prefix of the element.
+        /// </summary>
+        public string ValuePrefix => _valuePrefix;
+
+        /// <summary>
+        /// Gets the maximum length of the element.
+        /// </summary>
+        public string MaxLength => _maxLength;
+
+        /// <summary>
+        /// Gets the store as text attribute of the element.
+        /// </summary>
+        public string StoreAsText => _storeAsText;
+
+        /// <summary>
+        /// Gets the client extension of the element.
+        /// </summary>
+        public string ClientExtension => _clientExtension;
+
+        /// <summary>
+        /// Gets the expandable attribute of the element.
+        /// </summary>
+        public string Expandable => _expandable;
+
+        /// <summary>
+        /// Gets the maximum strings of the element.
+        /// </summary>
+        public string MaxStrings => _maxStrings;
 
         /// <summary>
         /// Gets the list of enum items for the element.
