@@ -1,6 +1,6 @@
 ﻿using System.Xml.Linq;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents a policy value in the ADMX file.

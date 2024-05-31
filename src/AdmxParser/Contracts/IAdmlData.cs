@@ -3,14 +3,14 @@
 namespace AdmxParser.Contracts
 {
     /// <summary>
-    /// Represents the interface for ADMX data.
+    /// Represents the interface for ADML data.
     /// </summary>
-    public interface IAdmxData
+    public interface IAdmlData
     {
         /// <summary>
-        /// Gets the parent AdmxContent.
+        /// Gets the parent ADML resource.
         /// </summary>
-        AdmxContent Parent { get; }
+        AdmlResource Parent { get; }
 
         /// <summary>
         /// Gets the source XElement.

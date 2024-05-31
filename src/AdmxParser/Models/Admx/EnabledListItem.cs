@@ -2,15 +2,15 @@
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
-    /// Represents an item in an disabled list.
+    /// Represents an item in an enabled list.
     /// </summary>
-    public class DisabledListItem : AdmxData
+    public class EnabledListItem : AdmxData
     {
         /// <summary>
-        /// Initializes a new instance of the <see cref="DisabledListItem"/> class.
+        /// Initializes a new instance of the <see cref="EnabledListItem"/> class.
         /// </summary>
         /// <param name="parent">
         /// The parent <see cref="AdmxContent"/>.
@@ -18,7 +18,7 @@ namespace AdmxParser.Models
         /// <param name="sourceElement">
         /// The source <see cref="XElement"/>.
         /// </param>
-        protected DisabledListItem(AdmxContent parent, XElement sourceElement) :
+        protected EnabledListItem(AdmxContent parent, XElement sourceElement) :
             base(parent, sourceElement)
         {
             _key = sourceElement.Attribute("key")?.Value;

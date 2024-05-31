@@ -1,7 +1,9 @@
 ﻿using AdmxParser.Models;
+using AdmxParser.Models.Admx;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -35,12 +37,12 @@ namespace AdmxParser
             _resources = default;
             _supportedOn = default;
 
-            _loadedAdmlResources = new Dictionary<string, AdmlResource>();
+            _loadedAdmlResources = new Dictionary<CultureInfo, AdmlResource>();
             _usingNamespaces = new List<UsingNamespace>();
             _categories = new List<Category>();
             _policies = new List<Policy>();
 
-            _loadedAdmlResourcesReadOnly = new ReadOnlyDictionary<string, AdmlResource>(_loadedAdmlResources);
+            _loadedAdmlResourcesReadOnly = new ReadOnlyDictionary<CultureInfo, AdmlResource>(_loadedAdmlResources);
             _usingNamespacesReadOnly = new ReadOnlyCollection<UsingNamespace>(_usingNamespaces);
             _categoriesReadOnly = new ReadOnlyCollection<Category>(_categories);
             _policiesReadOnly = new ReadOnlyCollection<Policy>(_policies);
@@ -57,19 +59,18 @@ namespace AdmxParser
         private Resources _resources;
         private SupportedOn _supportedOn;
 
-        private readonly Dictionary<string, AdmlResource> _loadedAdmlResources;
+        private readonly Dictionary<CultureInfo, AdmlResource> _loadedAdmlResources;
         private readonly List<UsingNamespace> _usingNamespaces;
         private readonly List<Category> _categories;
         private readonly List<Policy> _policies;
 
-        private readonly IReadOnlyDictionary<string, AdmlResource> _loadedAdmlResourcesReadOnly;
+        private readonly IReadOnlyDictionary<CultureInfo, AdmlResource> _loadedAdmlResourcesReadOnly;
         private readonly IReadOnlyList<UsingNamespace> _usingNamespacesReadOnly;
         private readonly IReadOnlyList<Category> _categoriesReadOnly;
         private readonly IReadOnlyList<Policy> _policiesReadOnly;
 
         internal string PathPrefix => _pathPrefix;
         internal XmlNamespaceManager NamespaceManager => _nsManager;
-        internal HashSet<AdmxData> CreatedAdmxDataList => _createdAdmxDataList;
 
         /// <summary>
         /// Gets the path to the ADMX file.
@@ -104,7 +105,7 @@ namespace AdmxParser
         /// <summary>
         /// Gets the loaded ADML resources.
         /// </summary>
-        public IReadOnlyDictionary<string, AdmlResource> LoadedAdmlResources => _loadedAdmlResourcesReadOnly;
+        public IReadOnlyDictionary<CultureInfo, AdmlResource> LoadedAdmlResources => _loadedAdmlResourcesReadOnly;
 
         /// <summary>
         /// Gets the using namespaces of this ADMX content.
@@ -153,12 +154,20 @@ namespace AdmxParser
         }
 
         /// <summary>
-        /// 
+        /// Load the ADMX content asynchronously.
         /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="InvalidOperationException"></exception>
-        /// <exception cref="XmlException"></exception>
+        /// <param name="cancellationToken">
+        /// The cancellation token.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// </returns>
+        /// <exception cref="InvalidOperationException">
+        /// Thrown when the ADMX content is already loaded.
+        /// </exception>
+        /// <exception cref="XmlException">
+        /// Thrown when the XML content is invalid.
+        /// </exception>
         protected async Task LoadAdmxAsync(CancellationToken cancellationToken = default)
         {
             if (_loaded)
@@ -226,11 +235,17 @@ namespace AdmxParser
         }
 
         /// <summary>
-        /// 
+        /// Load the ADML content asynchronously.
         /// </summary>
-        /// <param name="cancellationToken">The cancellation token.</param>
-        /// <returns></returns>
-        /// <exception cref="IOException"></exception>
+        /// <param name="cancellationToken">
+        /// The cancellation token.
+        /// </param>
+        /// <returns>
+        /// A task that represents the asynchronous operation.
+        /// </returns>
+        /// <exception cref="IOException">
+        /// Thrown when the directory path of the ADMX file cannot be obtained.
+        /// </exception>
         protected async Task LoadAdmlAsync(CancellationToken cancellationToken = default)
         {
             var directoryPath = Path.GetDirectoryName(_admxFilePath);
@@ -259,9 +274,39 @@ namespace AdmxParser
 
                 var eachAdmlResource = new AdmlResource(inferredAdmlFilePath);
                 await eachAdmlResource.LoadAdmlAsync(cancellationToken).ConfigureAwait(false);
-                _loadedAdmlResources.Add(itemName, eachAdmlResource);
+                _loadedAdmlResources.Add(foundCulture, eachAdmlResource);
             }
         }
-    }
 
+        /// <summary>
+        /// Gets the string value associated with the specified resource key.
+        /// </summary>
+        /// <param name="resourceKey">
+        /// The resource key.
+        /// </param>
+        /// <param name="culture">
+        /// The culture.
+        /// </param>
+        /// <param name="allowFallbackToEnglishUnitedStates">
+        /// Whether to allow fallback to English (United States) if the specified culture is not found.
+        /// </param>
+        /// <returns>
+        /// The string value associated with the resource key. If the resource key is not found, returns null.
+        /// </returns>
+        public string GetString(string resourceKey, CultureInfo culture, bool allowFallbackToEnglishUnitedStates = true)
+        {
+            if (_loadedAdmlResources.TryGetValue(culture, out var admlResource))
+                return admlResource.GetString(resourceKey);
+
+            if (allowFallbackToEnglishUnitedStates)
+            {
+                var enUsCulture = _loadedAdmlResources.Keys.FirstOrDefault(x => x.Name.Equals("en-US", StringComparison.OrdinalIgnoreCase));
+
+                if (enUsCulture != null && _loadedAdmlResources.TryGetValue(enUsCulture, out var enUsAdmlResource))
+                    return enUsAdmlResource.GetString(resourceKey);
+            }
+
+            return null;
+        }
+    }
 }

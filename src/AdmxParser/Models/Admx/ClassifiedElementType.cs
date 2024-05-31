@@ -1,4 +1,4 @@
-﻿namespace AdmxParser.Models
+﻿namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents the type of the classified element data.

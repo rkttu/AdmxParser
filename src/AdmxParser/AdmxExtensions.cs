@@ -1,7 +1,11 @@
-﻿using AdmxParser.Models;
+﻿using AdmxParser.Contracts;
+using AdmxParser.Models.Admx;
 using Microsoft.Win32;
 using System;
+using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Security.Principal;
 using System.Text;
@@ -189,5 +193,78 @@ namespace AdmxParser
             // Convert the SID to a string.
             return Helpers.ConvertSidToStringSid(sid);
         }
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <typeparam name="TLocalizable">
+        /// The type of the localizable.
+        /// </typeparam>
+        /// <param name="localizable">
+        /// The localizable.
+        /// </param>
+        /// <param name="resources">
+        /// The resources.
+        /// </param>
+        /// <param name="targetCulture">
+        /// The target culture.
+        /// </param>
+        /// <param name="allowFallbackToEnUs">
+        /// Whether to allow fallback to en-US.
+        /// </param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName<TLocalizable>(this TLocalizable localizable,
+            IReadOnlyDictionary<CultureInfo, AdmlResource> resources,
+            CultureInfo targetCulture,
+            bool allowFallbackToEnUs = true)
+            where TLocalizable : ILocalizable
+            => AdmxResourceReference.Interpolate(localizable.DisplayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized explain text.
+        /// </summary>
+        /// <typeparam name="TExplainable">
+        /// The type of the explainable.
+        /// </typeparam>
+        /// <param name="explainable">
+        /// The explainable.
+        /// </param>
+        /// <param name="resources">
+        /// The resources.
+        /// </param>
+        /// <param name="targetCulture">
+        /// The target culture.
+        /// </param>
+        /// <param name="allowFallbackToEnUs">
+        /// Whether to allow fallback to en-US.
+        /// </param>
+        /// <returns></returns>
+        public static string GetLocalizedExplainText<TExplainable>(this TExplainable explainable,
+            IReadOnlyDictionary<CultureInfo, AdmlResource> resources,
+            CultureInfo targetCulture,
+            bool allowFallbackToEnUs = true)
+            where TExplainable : IExplainable
+            => AdmxResourceReference.Interpolate(explainable.ExplainText, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <typeparam name="TLocalizable">
+        /// The type of the localizable.
+        /// </typeparam>
+        /// <param name="localizable">
+        /// The localizable.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName<TLocalizable>(this TLocalizable localizable, string separator = default)
+            where TLocalizable : ILocalizable
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(localizable.DisplayName).Select(x => x.ResourceKey));
     }
 }

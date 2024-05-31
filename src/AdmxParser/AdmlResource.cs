@@ -1,7 +1,10 @@
 ﻿using AdmxParser.Contracts;
+using AdmxParser.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.IO;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Xml;
@@ -22,18 +25,36 @@ namespace AdmxParser
         public AdmlResource(string admlFilePath)
         {
             Helpers.EnsureFileExists(admlFilePath);
+
+            _createdAdmlDataList = new HashSet<AdmlData>();
+
             _admlFilePath = admlFilePath;
             _loaded = false;
+            
             _stringTable = new Dictionary<string, string>();
             _stringKeys = new List<string>();
+
+            _readOnlyStringTable = new ReadOnlyDictionary<string, string>(_stringTable);
+            _readOnlyStringKeys = new ReadOnlyCollection<string>(_stringKeys);
         }
+
+        private string _pathPrefix;
+        private XmlNamespaceManager _nsManager;
+        private readonly HashSet<AdmlData> _createdAdmlDataList;
 
         private readonly string _admlFilePath;
         private bool _loaded;
         private string _displayName;
         private string _description;
+
         private readonly Dictionary<string, string> _stringTable;
         private readonly List<string> _stringKeys;
+
+        private readonly IReadOnlyDictionary<string, string> _readOnlyStringTable;
+        private readonly IReadOnlyList<string> _readOnlyStringKeys;
+
+        internal string PathPrefix => _pathPrefix;
+        internal XmlNamespaceManager NamespaceManager => _nsManager;
 
         /// <summary>
         /// Gets the path to the ADML file.
@@ -58,12 +79,36 @@ namespace AdmxParser
         /// <summary>
         /// Gets the string table of the ADML resource.
         /// </summary>
-        public IReadOnlyDictionary<string, string> StringTable => _stringTable;
+        public IReadOnlyDictionary<string, string> StringTable => _readOnlyStringTable;
 
         /// <summary>
         /// Gets the string keys of the ADML resource.
         /// </summary>
-        public IReadOnlyList<string> StringKeys => _stringKeys;
+        public IReadOnlyList<string> StringKeys => _readOnlyStringKeys;
+
+        /// <summary>
+        /// Creates an ADML data instance.
+        /// </summary>
+        /// <typeparam name="TAdmlData">
+        /// The type of the ADML data.
+        /// </typeparam>
+        /// <param name="sourceElement">
+        /// The source <see cref="XElement"/>.
+        /// </param>
+        /// <returns>
+        /// The created ADML data instance.
+        /// </returns>
+        public TAdmlData CreateAdmlData<TAdmlData>(XElement sourceElement)
+            where TAdmlData : AdmlData
+        {
+            var data = (TAdmlData)typeof(TAdmlData).GetConstructor(
+                BindingFlags.NonPublic | BindingFlags.CreateInstance | BindingFlags.Instance,
+                default, new Type[] { this.GetType(), typeof(XElement), }, default
+            ).Invoke(new object[] { this, sourceElement, });
+
+            _createdAdmlDataList.Add(data);
+            return data;
+        }
 
         /// <summary>
         /// Loads the ADML content asynchronously.
@@ -82,21 +127,21 @@ namespace AdmxParser
                 var admlContent = await streamReader.ReadToEndAsync().ConfigureAwait(false);
                 var admlDocument = XDocument.Parse(admlContent, LoadOptions.None);
 
-                var nsManager = Helpers.DiscoverDefaultNamespacePrefix(admlDocument, "policyDefinitionResources", out string pathPrefix, out _, nameTable: default);
+                _nsManager = Helpers.DiscoverDefaultNamespacePrefix(admlDocument, "policyDefinitionResources", out _pathPrefix, out _, nameTable: default);
                 var rootElement = default(XElement);
 
-                rootElement = admlDocument.XPathSelectElement($"/{pathPrefix}policyDefinitionResources", nsManager);
+                rootElement = admlDocument.XPathSelectElement($"/{_pathPrefix}policyDefinitionResources", _nsManager);
                 if (rootElement == default)
-                    pathPrefix = string.Empty;
+                    _pathPrefix = string.Empty;
 
-                rootElement = admlDocument.XPathSelectElement($"/{pathPrefix}policyDefinitionResources", nsManager);
+                rootElement = admlDocument.XPathSelectElement($"/{_pathPrefix}policyDefinitionResources", _nsManager);
                 if (rootElement == default)
                     throw new XmlException("Root element is not a policyDefinitionResources element.");
 
-                _displayName = rootElement.XPathSelectElement($"./{pathPrefix}displayName", nsManager)?.Value ?? string.Empty;
-                _description = rootElement.XPathSelectElement($"./{pathPrefix}description", nsManager)?.Value ?? string.Empty;
+                _displayName = rootElement.XPathSelectElement($"./{_pathPrefix}displayName", _nsManager)?.Value ?? string.Empty;
+                _description = rootElement.XPathSelectElement($"./{_pathPrefix}description", _nsManager)?.Value ?? string.Empty;
 
-                var stringTableElements = rootElement.XPathSelectElements($"./{pathPrefix}resources/{pathPrefix}stringTable/{pathPrefix}string", nsManager);
+                var stringTableElements = rootElement.XPathSelectElements($"./{_pathPrefix}resources/{_pathPrefix}stringTable/{_pathPrefix}string", _nsManager);
                 foreach (var eachStringElement in stringTableElements)
                 {
                     if (cancellationToken.IsCancellationRequested)

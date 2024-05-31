@@ -5,12 +5,12 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents a policy in the ADMX file.
     /// </summary>
-    public class Policy : AdmxData, IHasNameAttribute, ILocalizable
+    public class Policy : AdmxData, IHasNameAttribute, ILocalizable, IExplainable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Policy"/> class.

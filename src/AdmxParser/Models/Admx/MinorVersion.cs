@@ -1,7 +1,7 @@
 ﻿using AdmxParser.Contracts;
 using System.Xml.Linq;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents a minor version in the ADMX data.

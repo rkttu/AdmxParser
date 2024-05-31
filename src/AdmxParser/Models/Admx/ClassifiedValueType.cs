@@ -1,4 +1,4 @@
-﻿namespace AdmxParser.Models
+﻿namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents a classified value type.
@@ -19,7 +19,7 @@
         /// Represents a string value.
         /// </summary>
         String,
-        
+
         /// <summary>
         /// Represents a decimal value.
         /// </summary>

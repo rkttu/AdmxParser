@@ -1,4 +1,5 @@
-﻿using System.ComponentModel;
+﻿using System;
+using System.ComponentModel;
 using System.Runtime.InteropServices;
 
 namespace AdmxParser
@@ -17,11 +18,17 @@ namespace AdmxParser
         /// <param name="policyRefreshFailureReason">
         /// The reason for the policy refresh failure.
         /// </param>
+        /// <exception cref="System.PlatformNotSupportedException">
+        /// Thrown when the current platform is not Windows.
+        /// </exception>
         /// <returns>
         /// Whether the policy update was successful.
         /// </returns>
         public static bool PerformMachinePolicyUpdate(bool forceRefresh, out Win32Exception policyRefreshFailureReason)
         {
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                throw new PlatformNotSupportedException("This method is only supported on Windows NT family.");
+
             policyRefreshFailureReason = default;
             var result = false;
 
@@ -45,11 +52,17 @@ namespace AdmxParser
         /// <param name="policyRefreshFailureReason">
         /// The reason for the policy refresh failure.
         /// </param>
+        /// <exception cref="System.PlatformNotSupportedException">
+        /// Thrown when the current platform is not Windows.
+        /// </exception>
         /// <returns>
         /// Whether the policy update was successful.
         /// </returns>
         public static bool PerformCurrentUserPolicyUpdate(bool forceRefresh, out Win32Exception policyRefreshFailureReason)
         {
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                throw new PlatformNotSupportedException("This method is only supported on Windows NT family.");
+
             policyRefreshFailureReason = default;
             var result = false;
 
@@ -76,11 +89,17 @@ namespace AdmxParser
         /// <param name="currentUserPolicyRefreshFailureReason">
         /// The reason for the current user policy refresh failure.
         /// </param>
+        /// <exception cref="System.PlatformNotSupportedException">
+        /// Thrown when the current platform is not Windows.
+        /// </exception>
         /// <returns>
         /// Whether the policy update was successful.
         /// </returns>
         public static bool PerformFullPolicyUpdate(bool forceRefresh, out Win32Exception machinePolicyRefreshFailureReason, out Win32Exception currentUserPolicyRefreshFailureReason)
         {
+            if (Environment.OSVersion.Platform != PlatformID.Win32NT)
+                throw new PlatformNotSupportedException("This method is only supported on Windows NT family.");
+
             machinePolicyRefreshFailureReason = default;
             currentUserPolicyRefreshFailureReason = default;
 

@@ -1,7 +1,7 @@
 ﻿using AdmxParser.Contracts;
 using System.Xml.Linq;
 
-namespace AdmxParser
+namespace AdmxParser.Models
 {
     /// <summary>
     /// Represents the base class for AdmxData.

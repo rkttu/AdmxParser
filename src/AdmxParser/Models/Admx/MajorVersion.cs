@@ -4,7 +4,7 @@ using System.Collections.ObjectModel;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents a major version in the ADMX data.

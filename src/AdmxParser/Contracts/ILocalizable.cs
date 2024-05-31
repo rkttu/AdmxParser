@@ -10,5 +10,4 @@
         /// </summary>
         string DisplayName { get; }
     }
-
 }

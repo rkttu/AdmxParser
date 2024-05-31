@@ -2,12 +2,12 @@
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents a category in the ADMX file.
     /// </summary>
-    public class Category : AdmxData, IHasNameAttribute, ILocalizable
+    public class Category : AdmxData, IHasNameAttribute, ILocalizable, IExplainable
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="Category"/> class.
@@ -19,6 +19,7 @@ namespace AdmxParser.Models
         {
             _name = sourceElement.Attribute("name")?.Value;
             _displayName = sourceElement.Attribute("displayName")?.Value;
+            _explainText = sourceElement.Attribute("explainText")?.Value;
 
             var pathPrefix = Parent.PathPrefix;
             var nsManager = Parent.NamespaceManager;
@@ -30,6 +31,7 @@ namespace AdmxParser.Models
 
         private readonly string _name;
         private readonly string _displayName;
+        private readonly string _explainText;
         private readonly string _parentCategoryRef;
 
         /// <summary>
@@ -43,6 +45,11 @@ namespace AdmxParser.Models
         public string DisplayName => _displayName;
 
         /// <summary>
+        /// Gets the explain text of the category.
+        /// </summary>
+        public string ExplainText => _explainText;
+
+        /// <summary>
         /// Gets the reference to the parent category.
         /// </summary>
         public string ParentCategoryRef => _parentCategoryRef;
@@ -52,5 +59,4 @@ namespace AdmxParser.Models
         /// </summary>
         public bool HasParentCategory => !string.IsNullOrWhiteSpace(_parentCategoryRef);
     }
-
 }

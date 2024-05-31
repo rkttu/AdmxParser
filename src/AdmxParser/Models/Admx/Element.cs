@@ -4,7 +4,7 @@ using System.Linq;
 using System.Xml.Linq;
 using System.Xml.XPath;
 
-namespace AdmxParser.Models
+namespace AdmxParser.Models.Admx
 {
     /// <summary>
     /// Represents an element in the ADMX file.
@@ -78,7 +78,7 @@ namespace AdmxParser.Models
                 foreach (var eachItemElem in itemElems)
                     _enumItems.Add(Parent.CreateAdmxData<EnumItem>(eachItemElem));
             }
-            
+
             if (ClassifiedElementType == ClassifiedElementType.Boolean)
             {
                 var trueValueElem = sourceElement.XPathSelectElement($"./{pathPrefix}trueValue", nsManager);
