@@ -1,5 +1,6 @@
 ﻿using AdmxParser.Contracts;
 using AdmxParser.Models;
+using AdmxParser.Models.Adml;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -32,9 +33,11 @@ namespace AdmxParser
             _loaded = false;
             
             _stringTable = new Dictionary<string, string>();
+            _presentationTable = new Dictionary<string, Presentation>();
             _stringKeys = new List<string>();
 
             _readOnlyStringTable = new ReadOnlyDictionary<string, string>(_stringTable);
+            _readOnlyPresentationTable = new ReadOnlyDictionary<string, Presentation>(_presentationTable);
             _readOnlyStringKeys = new ReadOnlyCollection<string>(_stringKeys);
         }
 
@@ -48,9 +51,11 @@ namespace AdmxParser
         private string _description;
 
         private readonly Dictionary<string, string> _stringTable;
+        private readonly Dictionary<string, Presentation> _presentationTable;
         private readonly List<string> _stringKeys;
 
         private readonly IReadOnlyDictionary<string, string> _readOnlyStringTable;
+        private readonly IReadOnlyDictionary<string, Presentation> _readOnlyPresentationTable;
         private readonly IReadOnlyList<string> _readOnlyStringKeys;
 
         internal string PathPrefix => _pathPrefix;
@@ -80,6 +85,11 @@ namespace AdmxParser
         /// Gets the string table of the ADML resource.
         /// </summary>
         public IReadOnlyDictionary<string, string> StringTable => _readOnlyStringTable;
+
+        /// <summary>
+        /// Gets the presentation table of the ADML resource.
+        /// </summary>
+        public IReadOnlyDictionary<string, Presentation> PresentationTable => _readOnlyPresentationTable;
 
         /// <summary>
         /// Gets the string keys of the ADML resource.
@@ -155,6 +165,21 @@ namespace AdmxParser
                     var eachValue = eachStringElement.Value;
                     _stringTable.Add(eachId, eachValue);
                     _stringKeys.Add(eachId);
+                }
+
+                var presentationTableElements = rootElement.XPathSelectElements($"./{_pathPrefix}resources/{_pathPrefix}presentationTable/{_pathPrefix}presentation", _nsManager);
+                foreach (var eachPresentationElement in presentationTableElements)
+                {
+                    if (cancellationToken.IsCancellationRequested)
+                        return;
+
+                    var eachId = eachPresentationElement.Attribute("id")?.Value;
+
+                    if (eachId == default)
+                        continue;
+
+                    var eachValue = eachPresentationElement.Value;
+                    _presentationTable.Add(eachId, CreateAdmlData<Presentation>(eachPresentationElement));
                 }
 
                 _loaded = true;
