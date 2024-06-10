@@ -25,7 +25,7 @@ public class AdmxDirectoryTest
     }
 
 #if WINDOWS
-    [Fact]
+    [SkippableFact(typeof(Xunit.SkipException))]
 #else
     [Fact(Skip = "This test requires Windows.")]
 #endif
@@ -33,9 +33,7 @@ public class AdmxDirectoryTest
     {
         // Arrange
         var directory = AdmxDirectory.GetInstalledMicrosoftPolicyTemplates().FirstOrDefault();
-
-        if (directory == null)
-            throw SkipException.ForSkip("No installed Microsoft policy templates found.");
+        Skip.If(directory == null);
 
         // Act
         var result = await directory.LoadAsync(true);
