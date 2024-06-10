@@ -1,3 +1,5 @@
+using Xunit.Sdk;
+
 namespace AdmxParser.Test;
 
 public class AdmxDirectoryTest
@@ -15,6 +17,29 @@ public class AdmxDirectoryTest
         // Act
         var result = await directory.LoadAsync(true);
         
+        // Assert
+        Assert.True(result);
+        Assert.True(directory.Loaded);
+        Assert.NotEmpty(directory.LoadedAdmxContents);
+        Assert.NotEmpty(directory.AvailableLanguages);
+    }
+
+#if WINDOWS
+    [Fact]
+#else
+    [Fact(Skip = "This test requires Windows.")]
+#endif
+    public async Task Test_AdmxDirectoryTest_Installed()
+    {
+        // Arrange
+        var directory = AdmxDirectory.GetInstalledMicrosoftPolicyTemplates().FirstOrDefault();
+
+        if (directory == null)
+            throw SkipException.ForSkip("No installed Microsoft policy templates found.");
+
+        // Act
+        var result = await directory.LoadAsync(true);
+
         // Assert
         Assert.True(result);
         Assert.True(directory.Loaded);

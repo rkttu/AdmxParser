@@ -5,6 +5,7 @@ using System.Globalization;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
+using System.Threading;
 using System.Xml;
 using System.Xml.Linq;
 using System.Xml.XPath;
@@ -17,7 +18,7 @@ namespace AdmxParser
         {
             _availableCultures = new Lazy<IEnumerable<CultureInfo>>(
                 () => CultureInfo.GetCultures(CultureTypes.AllCultures),
-                false);
+                LazyThreadSafetyMode.None);
 
             _policyDefinitionNamespaces = new Lazy<IEnumerable<string>>(
                 () => new string[]
@@ -27,9 +28,11 @@ namespace AdmxParser
                     "http://schemas.microsoft.com/GroupPolicy/2006/07/Policysecurity intelligence",
                     "https://schemas.microsoft.com/GroupPolicy/2006/07/PolicyDefinitions",
                 },
-                false);
+                LazyThreadSafetyMode.None);
 
-            _parentCategoryRefSeparators = new Lazy<char[]>(() => new char[] { ':', }, false);
+            _parentCategoryRefSeparators = new Lazy<char[]>(
+                () => new char[] { ':', },
+                LazyThreadSafetyMode.None);
         }
 
         private static readonly Lazy<IEnumerable<CultureInfo>> _availableCultures;

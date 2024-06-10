@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -18,6 +19,47 @@ namespace AdmxParser
         /// <returns>The system policy definitions directory.</returns>
         public static AdmxDirectory GetSystemPolicyDefinitions()
             => new AdmxDirectory(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.Windows), "PolicyDefinitions"));
+
+        /// <summary>
+        /// Gets the installed Microsoft policy templates.
+        /// </summary>
+        /// <remarks>
+        /// This method will try to find installed Microsoft policy templates in the following directories:
+        /// - [Environment.SpecialFolder.ProgramFilesX86]\Microsoft Group Policy\*\PolicyDefinitions
+        /// - [Environment.SpecialFolder.ProgramFiles]\Microsoft Group Policy\*\PolicyDefinitions
+        /// - [Environment.SpecialFolder.CommonProgramFilesX86]\Microsoft Group Policy\*\PolicyDefinitions
+        /// - [Environment.SpecialFolder.CommonProgramFiles]\Microsoft Group Policy\*\PolicyDefinitions
+        /// </remarks>
+        /// <returns>
+        /// The installed Microsoft policy templates.
+        /// </returns>
+        public static IEnumerable<AdmxDirectory> GetInstalledMicrosoftPolicyTemplates()
+        {
+            var candidates = new List<string>
+            {
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFilesX86), "Microsoft Group Policy"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles), "Microsoft Group Policy"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFilesX86), "Microsoft Group Policy"),
+                Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.CommonProgramFiles), "Microsoft Group Policy"),
+            }.Distinct();
+
+            foreach (var eachParentDirectory in candidates)
+            {
+                if (!Directory.Exists(eachParentDirectory))
+                    continue;
+
+                foreach (var eachCandidateDirectory in Directory.GetDirectories(
+                    eachParentDirectory, "*", SearchOption.TopDirectoryOnly))
+                {
+                    var subPath = Path.Combine(eachCandidateDirectory, "PolicyDefinitions");
+
+                    if (!Directory.Exists(subPath))
+                        continue;
+
+                    yield return new AdmxDirectory(subPath);
+                }
+            }
+        }
 
         /// <summary>
         /// Initializes a new instance of the <see cref="AdmxDirectory"/> class.
