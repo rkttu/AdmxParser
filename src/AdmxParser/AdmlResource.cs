@@ -53,12 +53,12 @@ namespace AdmxParser
         /// <summary>
         /// Gets the display name of the ADML resource.
         /// </summary>
-        public string DisplayName => _policyDefinitionResources.displayName;
+        public string DisplayName => _policyDefinitionResources?.displayName;
 
         /// <summary>
         /// Gets the description of the ADML resource.
         /// </summary>
-        public string Description => _policyDefinitionResources.description;
+        public string Description => _policyDefinitionResources?.description;
 
         /// <summary>
         /// Gets the string table of the ADML resource.
@@ -68,7 +68,8 @@ namespace AdmxParser
         /// <summary>
         /// Gets the presentation table of the ADML resource.
         /// </summary>
-        public IReadOnlyList<PolicyPresentation> PresentationTable => _policyDefinitionResources.resources.presentationTable.presentation;
+        public IReadOnlyList<PolicyPresentation> PresentationTable => _policyDefinitionResources?.resources?.presentationTable?.presentation ??
+            Array.Empty<PolicyPresentation>();
 
         /// <summary>
         /// Gets the string keys of the ADML resource.
@@ -102,7 +103,9 @@ namespace AdmxParser
                 {
                     var serializer = new XmlSerializer(typeof(PolicyDefinitionResources));
                     _policyDefinitionResources = (PolicyDefinitionResources)serializer.Deserialize(docReader);
-                    _stringTable = new ReadOnlyDictionary<string, string>(_policyDefinitionResources.resources.stringTable.@string.ToDictionary(x => x.id, x => x.Value));
+                    var stringTable = _policyDefinitionResources?.resources?.stringTable?.@string?.ToDictionary(x => x.id, x => x.Value) ??
+                        new Dictionary<string, string>();
+                    _stringTable = new ReadOnlyDictionary<string, string>(stringTable);
                     _stringKeys = _stringTable.Keys.ToArray();
                     _loaded = true;
                 }

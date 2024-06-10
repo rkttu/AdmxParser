@@ -57,22 +57,23 @@ namespace AdmxParser
         /// <summary>
         /// Gets the target namespace of this ADMX content.
         /// </summary>
-        public PolicyNamespaceAssociation TargetNamespace => _policyDefinitions.policyNamespaces.target;
+        public PolicyNamespaceAssociation TargetNamespace => _policyDefinitions?.policyNamespaces?.target;
 
         /// <summary>
         /// Gets the superseded ADM of this ADMX content.
         /// </summary>
-        public FileReference[] SupersededAdm => _policyDefinitions.supersededAdm;
+        public FileReference[] SupersededAdm => _policyDefinitions?.supersededAdm ??
+            Array.Empty<FileReference>();
 
         /// <summary>
         /// Gets the resources of this ADMX content.
         /// </summary>
-        public LocalizationResourceReference Resources => _policyDefinitions.resources;
+        public LocalizationResourceReference Resources => _policyDefinitions?.resources;
 
         /// <summary>
         /// Gets the supported products and definitions of this ADMX content.
         /// </summary>
-        public SupportedOnTable SupportedOn => _policyDefinitions.supportedOn;
+        public SupportedOnTable SupportedOn => _policyDefinitions?.supportedOn;
 
         /// <summary>
         /// Gets the loaded ADML resources.
@@ -82,17 +83,20 @@ namespace AdmxParser
         /// <summary>
         /// Gets the using namespaces of this ADMX content.
         /// </summary>
-        public IReadOnlyList<PolicyNamespaceAssociation> UsingNamespaces => _policyDefinitions.policyNamespaces.@using;
+        public IReadOnlyList<PolicyNamespaceAssociation> UsingNamespaces => _policyDefinitions?.policyNamespaces?.@using ??
+            Array.Empty<PolicyNamespaceAssociation>();
 
         /// <summary>
         /// Gets the categories of this ADMX content.
         /// </summary>
-        public IReadOnlyList<Category> Categories => _policyDefinitions.categories.category;
+        public IReadOnlyList<Category> Categories => _policyDefinitions?.categories?.category ??
+            Array.Empty<Category>();
 
         /// <summary>
         /// Gets the policies of this ADMX content.
         /// </summary>
-        public IReadOnlyList<PolicyDefinition> Policies => _policyDefinitions.policies.policy;
+        public IReadOnlyList<PolicyDefinition> Policies => _policyDefinitions?.policies?.policy ??
+            Array.Empty<PolicyDefinition>();
 
         /// <summary>
         /// Load the ADMX content asynchronously.
