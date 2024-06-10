@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Globalization;
-using System.Linq;
 
 namespace AdmxParser
 {
@@ -239,7 +238,7 @@ namespace AdmxParser
         /// Japanese (Japan)
         /// </summary>
         public static readonly WindowsLanguage Japanese_Japan = new WindowsLanguage("Japanese", "Japan", "ja", "JP", 0x0411, false);
-        
+
         /// <summary>
         /// Korean (Korea)
         /// </summary>
@@ -406,7 +405,7 @@ namespace AdmxParser
         /// Gets the IETF language tag. (e.g. en-US)
         /// </summary>
         public string IetfLanguageTag => $"{_languageTag}-{_regionTag}";
-        
+
         /// <summary>
         /// Gets the language code identifier.
         /// </summary>

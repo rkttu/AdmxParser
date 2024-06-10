@@ -1,5 +1,4 @@
-﻿using AdmxParser.Contracts;
-using AdmxParser.Models.Admx;
+﻿using AdmxParser.Serialization;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -7,7 +6,6 @@ using System.ComponentModel;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.InteropServices;
-using System.Security.Principal;
 using System.Text;
 
 namespace AdmxParser
@@ -32,17 +30,17 @@ namespace AdmxParser
         /// <returns>
         /// If the local machine registry key was successfully retrieved, <c>true</c>; otherwise, <c>false</c>.
         /// </returns>
-        public static bool TryGetLocalMachineRegistryKey(this Policy policy, out RegistryKey registryKey, bool writable)
+        public static bool TryGetLocalMachineRegistryKey(this PolicyDefinition policy, out RegistryKey registryKey, bool writable)
         {
             registryKey = default;
 
-            switch (policy.Class?.ToUpperInvariant())
+            switch (policy.@class)
             {
-                case "MACHINE":
-                case "BOTH":
+                case PolicyClass.Machine:
+                case PolicyClass.Both:
                     try
                     {
-                        registryKey = Registry.LocalMachine.OpenSubKey(policy.Key, writable);
+                        registryKey = Registry.LocalMachine.OpenSubKey(policy.key, writable);
                         return true;
                     }
                     catch
@@ -70,17 +68,17 @@ namespace AdmxParser
         /// <returns>
         /// If the current user registry key was successfully retrieved, <c>true</c>; otherwise, <c>false</c>.
         /// </returns>
-        public static bool TryGetCurrentUserRegistryKey(this Policy policy, out RegistryKey registryKey, bool writable)
+        public static bool TryGetCurrentUserRegistryKey(this PolicyDefinition policy, out RegistryKey registryKey, bool writable)
         {
             registryKey = default;
 
-            switch (policy.Class?.ToUpperInvariant())
+            switch (policy.@class)
             {
-                case "USER":
-                case "BOTH":
+                case PolicyClass.User:
+                case PolicyClass.Both:
                     try
                     {
-                        registryKey = Registry.CurrentUser.OpenSubKey(policy.Key, writable);
+                        registryKey = Registry.CurrentUser.OpenSubKey(policy.key, writable);
                         return true;
                     }
                     catch
@@ -111,17 +109,17 @@ namespace AdmxParser
         /// <returns>
         /// If the user registry key was successfully retrieved, <c>true</c>; otherwise, <c>false</c>.
         /// </returns>
-        public static bool TryGetUserRegistryKeyBySid(this Policy policy, string userSid, out RegistryKey registryKey, bool writable)
+        public static bool TryGetUserRegistryKeyBySid(this PolicyDefinition policy, string userSid, out RegistryKey registryKey, bool writable)
         {
             registryKey = default;
 
-            switch (policy.Class?.ToUpperInvariant())
+            switch (policy.@class)
             {
-                case "USER":
-                case "BOTH":
+                case PolicyClass.User:
+                case PolicyClass.Both:
                     try
                     {
-                        registryKey = Registry.Users.OpenSubKey($"{userSid}\\{policy.Key}", writable);
+                        registryKey = Registry.Users.OpenSubKey($"{userSid}\\{policy.key}", writable);
                         return true;
                     }
                     catch
@@ -152,7 +150,7 @@ namespace AdmxParser
         /// <returns>
         /// If the user registry key was successfully retrieved, <c>true</c>; otherwise, <c>false</c>.
         /// </returns>
-        public static bool TryGetUserRegistryByName(this Policy policy, string accountName, out RegistryKey registryKey, bool writable)
+        public static bool TryGetUserRegistryByName(this PolicyDefinition policy, string accountName, out RegistryKey registryKey, bool writable)
             => TryGetUserRegistryKeyBySid(policy, GetSidFromAccountName(accountName), out registryKey, writable);
 
         /// <summary>
@@ -174,7 +172,7 @@ namespace AdmxParser
         {
             if (string.IsNullOrWhiteSpace(accountName))
                 throw new ArgumentNullException(nameof(accountName));
-            
+
             var sidLength = 0;
             var domainNameLength = 0;
             var sidUse = default(NativeMethods.SidNameUse);
@@ -197,39 +195,112 @@ namespace AdmxParser
         /// <summary>
         /// Gets the localized display name.
         /// </summary>
-        /// <typeparam name="TLocalizable">
-        /// The type of the localizable.
-        /// </typeparam>
-        /// <param name="localizable">
-        /// The localizable.
-        /// </param>
-        /// <param name="resources">
-        /// The resources.
-        /// </param>
-        /// <param name="targetCulture">
-        /// The target culture.
-        /// </param>
-        /// <param name="allowFallbackToEnUs">
-        /// Whether to allow fallback to en-US.
-        /// </param>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
         /// <returns>
         /// The localized display name.
         /// </returns>
-        public static string GetLocalizedDisplayName<TLocalizable>(this TLocalizable localizable,
-            IReadOnlyDictionary<CultureInfo, AdmlResource> resources,
-            CultureInfo targetCulture,
-            bool allowFallbackToEnUs = true)
-            where TLocalizable : ILocalizable
-            => AdmxResourceReference.Interpolate(localizable.DisplayName, resources, targetCulture, allowFallbackToEnUs);
+        public static string GetLocalizedDisplayName(this EnumerationElementItem item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this PolicyDefinition item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this Category item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this SupportedOnDefinition item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this SupportedMinorVersion item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this SupportedMajorVersion item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this SupportedProduct item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized display name.
+        /// </summary>
+        /// <param name="item">The localizable item.</param>
+        /// <param name="resources">The resources.</param>
+        /// <param name="targetCulture">The target culture.</param>
+        /// <param name="allowFallbackToEnUs">Whether to allow fallback to en-US.</param>
+        /// <returns>
+        /// The localized display name.
+        /// </returns>
+        public static string GetLocalizedDisplayName(this PolicyDefinitionResources item, IReadOnlyDictionary<CultureInfo, AdmlResource> resources, CultureInfo targetCulture, bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.displayName, resources, targetCulture, allowFallbackToEnUs);
 
         /// <summary>
         /// Gets the localized explain text.
         /// </summary>
-        /// <typeparam name="TExplainable">
-        /// The type of the explainable.
-        /// </typeparam>
-        /// <param name="explainable">
-        /// The explainable.
+        /// <param name="item">
+        /// The explainable item.
         /// </param>
         /// <param name="resources">
         /// The resources.
@@ -241,21 +312,39 @@ namespace AdmxParser
         /// Whether to allow fallback to en-US.
         /// </param>
         /// <returns></returns>
-        public static string GetLocalizedExplainText<TExplainable>(this TExplainable explainable,
+        public static string GetLocalizedExplainTextInternal(PolicyDefinition item,
             IReadOnlyDictionary<CultureInfo, AdmlResource> resources,
             CultureInfo targetCulture,
             bool allowFallbackToEnUs = true)
-            where TExplainable : IExplainable
-            => AdmxResourceReference.Interpolate(explainable.ExplainText, resources, targetCulture, allowFallbackToEnUs);
+            => AdmxResourceReference.Interpolate(item.explainText, resources, targetCulture, allowFallbackToEnUs);
+
+        /// <summary>
+        /// Gets the localized explain text.
+        /// </summary>
+        /// <param name="item">
+        /// The explainable item.
+        /// </param>
+        /// <param name="resources">
+        /// The resources.
+        /// </param>
+        /// <param name="targetCulture">
+        /// The target culture.
+        /// </param>
+        /// <param name="allowFallbackToEnUs">
+        /// Whether to allow fallback to en-US.
+        /// </param>
+        /// <returns></returns>
+        public static string GetLocalizedExplainTextInternal(Category item,
+            IReadOnlyDictionary<CultureInfo, AdmlResource> resources,
+            CultureInfo targetCulture,
+            bool allowFallbackToEnUs = true)
+            => AdmxResourceReference.Interpolate(item.explainText, resources, targetCulture, allowFallbackToEnUs);
 
         /// <summary>
         /// Gets the mangled member name from the display name.
         /// </summary>
-        /// <typeparam name="TLocalizable">
-        /// The type of the localizable.
-        /// </typeparam>
-        /// <param name="localizable">
-        /// The localizable.
+        /// <param name="item">
+        /// The localizable item.
         /// </param>
         /// <param name="separator">
         /// The separator.
@@ -263,8 +352,112 @@ namespace AdmxParser
         /// <returns>
         /// The mangled member name.
         /// </returns>
-        public static string GetMangledMemberNameFromDisplayName<TLocalizable>(this TLocalizable localizable, string separator = default)
-            where TLocalizable : ILocalizable
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(localizable.DisplayName).Select(x => x.ResourceKey));
+        public static string GetMangledMemberNameFromDisplayName(this EnumerationElementItem item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this PolicyDefinition item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this Category item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this SupportedOnDefinition item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this SupportedMinorVersion item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this SupportedMajorVersion item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this SupportedProduct item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+
+        /// <summary>
+        /// Gets the mangled member name from the display name.
+        /// </summary>
+        /// <param name="item">
+        /// The localizable item.
+        /// </param>
+        /// <param name="separator">
+        /// The separator.
+        /// </param>
+        /// <returns>
+        /// The mangled member name.
+        /// </returns>
+        public static string GetMangledMemberNameFromDisplayName(this PolicyDefinitionResources item, string separator = default)
+            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
     }
 }

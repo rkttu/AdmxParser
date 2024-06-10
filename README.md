@@ -4,6 +4,12 @@
 
 .NET-based ADMX/ADML parser library and programmatic Windows policy setting/management framework
 
+## Breaking Changes
+
+### From 0.5 to 0.6
+
+All types of models and contract interfaces has been removed. Instead, the library now uses auto-generated XML schema classes to represent ADMX/ADML files for accuracy and integrity.
+
 ## Minimum Requirements
 
 - Requires a platform with .NET Standard 2.0 or later, and Windows Vista+, Windows Server 2008+
@@ -26,6 +32,11 @@ var admxCollection = instance.LoadedAdmxFiles;
 
 // Use admxCollection variable to investigate system policies.
 ```
+
+## XML Schema Notes
+
+- The XML schema used in this library is based on the schema defined in the [ADMX File Schema](https://learn.microsoft.com/en-us/openspecs/windows_protocols/ms-gpreg/6e10478a-e9e6-4fdc-a1f6-bdd9bd7f2209).
+- You can regenerate the XML schema classes by running the `xsd.exe` tool with the parameters `PolicyDefinitionFiles.xsd /c /order /eld /edb /l:CS /namespace:AdmxParser.Serialization /nologo`.
 
 ## License
 
