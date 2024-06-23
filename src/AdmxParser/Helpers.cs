@@ -1,9 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Xml;
@@ -178,29 +176,6 @@ namespace AdmxParser
 
             if (!File.Exists(filePath))
                 throw new FileNotFoundException($"Selected file '{filePath}' does not exists on this system.");
-        }
-
-        public static string ConvertSidToStringSid(byte[] sid)
-        {
-            var sidPtr = IntPtr.Zero;
-
-            try
-            {
-                sidPtr = Marshal.AllocHGlobal(sid.Length);
-                Marshal.Copy(sid, 0, sidPtr, sid.Length);
-
-                if (!NativeMethods.ConvertSidToStringSidW(sidPtr, out IntPtr stringSidPtr))
-                    throw new Win32Exception(Marshal.GetLastWin32Error());
-
-                var sidString = Marshal.PtrToStringAuto(stringSidPtr);
-                NativeMethods.LocalFree(stringSidPtr);
-                return sidString;
-            }
-            finally
-            {
-                if (sidPtr != IntPtr.Zero)
-                    Marshal.FreeHGlobal(sidPtr);
-            }
         }
     }
 }

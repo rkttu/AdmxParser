@@ -6,6 +6,11 @@
 
 ## Breaking Changes
 
+### From 0.6.2 to 0.6.3
+
+- I understand that changing policy settings is the last step in the mechanism, changing the registry. Since the framework does not handle looking up or modifying policies directly, and instead has to make it use the IGroupPolicyObject2 interface, I removed the associated functionality and test cases.
+- Removed other unused extension methods.
+
 ### From 0.5 to 0.6
 
 All types of models and contract interfaces has been removed. Instead, the library now uses auto-generated XML schema classes to represent ADMX/ADML files for accuracy and integrity.
