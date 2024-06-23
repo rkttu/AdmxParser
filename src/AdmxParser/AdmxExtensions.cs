@@ -699,7 +699,7 @@ namespace AdmxParser
         /// <exception cref="ArgumentException">
         /// Thrown when the specified registry value is not supported.
         /// </exception>
-        public static Value GetValue(this RegistryKey registryKey, string name, bool treatAsText)
+        public static Value GetAdmxValue(this RegistryKey registryKey, string name, bool treatAsText)
         {
             if (registryKey == null)
                 return null;
@@ -761,7 +761,7 @@ namespace AdmxParser
         /// <exception cref="ArgumentException">
         /// Thrown when the specified ADMX value is invalid.
         /// </exception>
-        public static void SetValue(this RegistryKey registryKey, string name, Value value, bool treatAsText)
+        public static void SetAdmxValue(this RegistryKey registryKey, string name, Value value, bool treatAsText)
         {
             if (registryKey == null)
                 return;
