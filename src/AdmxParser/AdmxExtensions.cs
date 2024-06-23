@@ -846,5 +846,32 @@ namespace AdmxParser
 
             return false;
         }
+
+        /// <summary>
+        /// Get string expression of ADMX value.
+        /// </summary>
+        /// <param name="value">
+        /// The ADMX value.
+        /// </param>
+        /// <param name="attachPostfixToDecimal">
+        /// Whether to attach postfix.
+        /// </param>
+        /// <returns>
+        /// The string expression of the ADMX value.
+        /// </returns>
+        public static string GetStringExpression(this Value value, bool attachPostfixToDecimal = false)
+        {
+            if (value == null)
+                return null;
+            if (value.Item is ValueDecimal)
+                return ((ValueDecimal)value.Item).value.ToString() + (attachPostfixToDecimal ? "u" : string.Empty);
+            if (value.Item is ValueLongDecimal)
+                return ((ValueLongDecimal)value.Item).value.ToString() + (attachPostfixToDecimal ? "uL" : string.Empty);
+            if (value.Item is string)
+                return (string)value.Item;
+            if (value.Item is ValueDelete)
+                return "<delete>";
+            return null;
+        }
     }
 }
