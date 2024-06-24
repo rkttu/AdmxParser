@@ -596,6 +596,42 @@ namespace AdmxParser
         }
 
         /// <summary>
+        /// Determines whether the specified ADMX value is a decimal value.
+        /// </summary>
+        /// <param name="value">
+        /// The ADMX value.
+        /// </param>
+        /// <returns>
+        /// If the ADMX value is a decimal value, <c>true</c>; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsDecimalValue(this Value value)
+            => value?.Item is ValueDecimal;
+
+        /// <summary>
+        /// Determines whether the specified ADMX value is a long decimal value.
+        /// </summary>
+        /// <param name="value">
+        /// The ADMX value.
+        /// </param>
+        /// <returns>
+        /// If the ADMX value is a long decimal value, <c>true</c>; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsLongDecimalValue(this Value value)
+            => value?.Item is ValueLongDecimal;
+
+        /// <summary>
+        /// Determines whether the specified ADMX value is a string value.
+        /// </summary>
+        /// <param name="value">
+        /// The ADMX value.
+        /// </param>
+        /// <returns>
+        /// If the ADMX value is a string value, <c>true</c>; otherwise, <c>false</c>.
+        /// </returns>
+        public static bool IsStringValue(this Value value)
+            => value?.Item is string;
+
+        /// <summary>
         /// Determines whether the specified ADMX value is a delete value.
         /// </summary>
         /// <param name="value">
