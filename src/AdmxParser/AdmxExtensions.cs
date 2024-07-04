@@ -1,4 +1,5 @@
-﻿using AdmxParser.Serialization;
+﻿using AdmxParser.Models;
+using AdmxParser.Serialization;
 using Microsoft.Win32;
 using System;
 using System.Collections.Generic;
@@ -278,112 +279,172 @@ namespace AdmxParser
             => AdmxResourceReference.Interpolate(item.explainText, resources, targetCulture, allowFallbackToEnUs);
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the CheckBox control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this EnumerationElementItem item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The CheckBox control if found; otherwise, null.</returns>
+        public static CheckBox GetCheckBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is CheckBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the ComboBox control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this PolicyDefinition item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The ComboBox control if found; otherwise, null.</returns>
+        public static ComboBox GetComboBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is ComboBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the DecimalTextBox control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this Category item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The DecimalTextBox control if found; otherwise, null.</returns>
+        public static DecimalTextBox GetDecimalTextBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is DecimalTextBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the DropdownList control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this SupportedOnDefinition item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The DropdownList control if found; otherwise, null.</returns>
+        public static DropdownList GetDropdownList(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is DropdownList ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the ListBox control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this SupportedMinorVersion item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The ListBox control if found; otherwise, null.</returns>
+        public static ListBox GetListBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is ListBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the LongDecimalTextBox control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this SupportedMajorVersion item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The LongDecimalTextBox control if found; otherwise, null.</returns>
+        public static LongDecimalTextBox GetLongDecimalTextBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is LongDecimalTextBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the MultiTextBox control from the PolicyPresentation by element ID.
         /// </summary>
-        /// <param name="item">
-        /// The localizable item.
-        /// </param>
-        /// <param name="separator">
-        /// The separator.
-        /// </param>
-        /// <returns>
-        /// The mangled member name.
-        /// </returns>
-        public static string GetMangledMemberNameFromDisplayName(this SupportedProduct item, string separator = default)
-            => string.Join(separator ?? string.Empty, AdmxResourceReference.Parse(item.displayName).Select(x => x.ResourceKey));
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The MultiTextBox control if found; otherwise, null.</returns>
+        public static MultiTextBox GetMultiTextBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is MultiTextBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
 
         /// <summary>
-        /// Gets the mangled member name from the display name.
+        /// Gets the TextBox control from the PolicyPresentation by element ID.
+        /// </summary>
+        /// <param name="policyPresentation">The PolicyPresentation.</param>
+        /// <param name="elementId">The element ID.</param>
+        /// <returns>The TextBox control if found; otherwise, null.</returns>
+        public static TextBox GetTextBox(this PolicyPresentation policyPresentation, string elementId)
+        {
+            if (policyPresentation == null)
+                throw new ArgumentNullException(nameof(policyPresentation));
+            foreach (var eachItem in policyPresentation.Items)
+            {
+                if (eachItem is TextBox ctrl && string.Equals(elementId, ctrl.refId, StringComparison.Ordinal))
+                    return ctrl;
+            }
+            return null;
+        }
+
+        /// <summary>
+        /// Converts a Value object to a CLR type.
+        /// </summary>
+        /// <param name="value">The Value object to convert.</param>
+        /// <returns>The converted CLR type.</returns>
+        public static object ToCLRType(this Value value)
+        {
+            if (value.Item is ValueDecimal vd)
+                return unchecked((int)vd.value);
+            else if (value.Item is ValueLongDecimal vld)
+                return unchecked((long)vld.value);
+            else if (value.Item is ValueDelete vdel)
+                return vdel;
+            else if (value.Item is string s)
+                return s;
+            else
+                throw new ArgumentException($"Unknown value type '{value.Item?.GetType()?.Name ?? "(null)"}'.");
+        }
+
+        /// <summary>
+        /// Converts a Value object to a ParsedRegistryFixedItem object.
         /// </summary>
         /// <param name="item">
         /// The localizable item.
@@ -908,6 +969,25 @@ namespace AdmxParser
             if (value.Item is ValueDelete)
                 return "<delete>";
             return null;
+        }
+
+        /// <param name="value">The Value object to convert.</param>
+        /// <param name="key">The registry key.</param>
+        /// <param name="valueName">The value name.</param>
+        /// <param name="isPrefix">Indicates whether the value name is a prefix.</param>
+        /// <returns>The converted ParsedRegistryFixedItem object.</returns>
+        public static ParsedRegistryFixedItem ToRegistryItem(this Value value, string key, string valueName, bool isPrefix)
+        {
+            if (value.Item is ValueDecimal vd)
+                return new ParsedRegistryFixedItem { Key = key, ValueName = valueName, Delete = false, Value = unchecked((int)vd.value), };
+            else if (value.Item is ValueLongDecimal vld)
+                return new ParsedRegistryFixedItem { Key = key, ValueName = valueName, Delete = false, Value = unchecked((long)vld.value), };
+            else if (value.Item is string s)
+                return new ParsedRegistryFixedItem { Key = key, ValueName = valueName, Delete = false, Value = s, };
+            else if (value.Item is ValueDelete vdel)
+                return new ParsedRegistryFixedItem { Key = key, ValueName = valueName, Delete = true, Value = null, };
+            else
+                throw new ArgumentException($"Unknown value type '{value.Item?.GetType()?.Name ?? "(null)"}'.");
         }
     }
 }

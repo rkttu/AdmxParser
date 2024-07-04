@@ -2,9 +2,13 @@
 
 [![NuGet Version](https://img.shields.io/nuget/v/AdmxParser)](https://www.nuget.org/packages/AdmxParser/) ![Build Status](https://github.com/rkttu/AdmxParser/actions/workflows/dotnet.yml/badge.svg) [![GitHub Sponsors](https://img.shields.io/github/sponsors/rkttu)](https://github.com/sponsors/rkttu/)
 
-.NET-based ADMX/ADML parser library and programmatic Windows policy setting/management framework
+.NET-based ADMX/ADML parser library
 
 ## Breaking Changes
+
+### From 0.6.7 to 0.7
+
+- Removed `GetMangledMemberNameFromDisplayName` extension methods due to lack of usage.
 
 ### From 0.6.2 to 0.6.3
 
@@ -23,7 +27,9 @@ All types of models and contract interfaces has been removed. Instead, the libra
 
 ## How to use
 
-### Loading PolicyDefinitions installed in the Windows directory
+### Loading PolicyDefinitions XML schema
+
+Explore the policy model with C# classes that replicate the ADMX/ADML XML schema prototype.
 
 ```csharp
 using AdmxParser;
@@ -36,6 +42,26 @@ await instance.LoadAsync(true);
 var admxCollection = instance.LoadedAdmxFiles;
 
 // Use admxCollection variable to investigate system policies.
+```
+
+### Parsing ADMX/ADML files
+
+You can explore the changes that will actually be made to your POL file in a preview form.
+
+```csharp
+using AdmxParser;
+
+...
+
+var instance = AdmxDirectory.GetSystemPolicyDefinitions();
+await instance.LoadAsync(true);
+
+var models = admxDirectory.ParseModels();
+
+foreach (var eachPolicy in models)
+{
+	// ...
+}
 ```
 
 ## XML Schema Notes
